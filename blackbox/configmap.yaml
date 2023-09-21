@@ -1,0 +1,58 @@
+---
+# Source: prometheus-blackbox-exporter/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-blackbox-prometheus-blackbox-exporter
+  namespace: monitoring
+  labels:
+    helm.sh/chart: prometheus-blackbox-exporter-7.8.0
+    app.kubernetes.io/name: prometheus-blackbox-exporter
+    app.kubernetes.io/instance: prometheus-blackbox
+    app.kubernetes.io/version: "0.23.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  blackbox.yaml: |
+    modules:
+      http_2xx:
+        http:
+          follow_redirects: true
+          preferred_ip_protocol: ip4
+          method: GET
+          headers:
+            Cache-Control: no-cache
+          valid_http_versions:
+          - HTTP/1.1
+          - HTTP/2.0
+        prober: http
+        timeout: 5s
+      tcp_connect:
+        prober: tcp
+        timeout: 10s
+        tcp:
+          preferred_ip_protocol: "ip4"    
+  prometheus.yaml: |
+    - job_name: 'blackbox-demo'
+        metrics_path: /probe
+        scrape_interval: 1m
+        scrape_timeout: 10s
+        params:
+          module: [http_2xx]  # Look for a HTTP 200 response.
+        static_configs:
+          - targets:
+            - http://solr:8983/solr/
+            - https://shydrate.com
+            - https://google.com
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox:9115  # The blackbox exporter's real hostname:port.
+          - target_label: route
+            replacement: slack-demo
+          - target_label: cluster
+            replacement: dmmo
+          - target_label: envinronment
+            replacement: demo

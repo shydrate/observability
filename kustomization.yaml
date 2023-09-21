@@ -1,0 +1,10 @@
+resources:
+  - kube-state-metrics-configs
+  - alertmanager
+  - grafana
+  - node-exporter
+  - prometheus
+  - loki
+  - promtail
+  - sample-app
+  - namespace.yaml

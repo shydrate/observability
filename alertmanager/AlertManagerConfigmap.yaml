@@ -1,0 +1,123 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+data:
+  config.yml: |-
+    global:
+    templates:
+    - '/etc/alertmanager/*.tmpl'
+    route:
+      receiver: alert-emailer
+      group_by: ['alertname','severity','priority']
+      group_wait: 10s
+      repeat_interval: 30m
+      routes:
+        - receiver: slack-demo
+          match:
+            severity: slack
+          group_wait: 10s
+          repeat_interval: 1m
+          group_interval: 5m
+        # - match:
+        #     severity: warning
+        #   receiver: slack-demo
+        #   group_wait: 30s
+        #   group_interval: 5m
+        #   repeat_interval: 10m
+        # - match:
+        #     severity: info
+        #   receiver: slack-demo
+        #   group_wait: 30s
+        #   group_interval: 5m
+        #   repeat_interval: 10m
+ 
+    receivers:
+    - name: alert-emailer
+      email_configs:
+      - to: demo@devopscube.com
+        send_resolved: false
+        from: from-email@email.com
+        smarthost: smtp.eample.com:25
+        require_tls: false
+    - name: slack-demo
+      slack_configs:
+      - api_url: https://hooks.slack.com/services/
+        channel: '#loggingmonitoring'
+
+
+  alertRules: |
+      groups:
+      - name: Alerting rules
+        rules:
+
+        - alert: EndpointDown
+          expr: probe_success == 0
+          for: 2m
+          labels:
+            severity: "critical"
+            route: slack-demo
+          annotations:
+            summary: "`{{ $labels.instance }}` appears to be down"
+            description: "Network endpoint has not responded; check the endpoint"
+
+        - alert: KubernetesClusterMemoryUsageWarn
+          expr: (sum (container_memory_working_set_bytes{id="/"}) / sum (machine_memory_bytes) * 100) >= 80 and (sum (container_memory_working_set_bytes{id="/"}) / sum (machine_memory_bytes) * 100) < 90
+          for: 5m
+          labels:
+            severity: "warning"
+            route: slack-demo
+          annotations:
+            summary: "`{{ $labels.instance }}` memory usage is {{ $value }}%"
+            description: "Kubernetes cluster memory usage is over {{ $value }}%"
+
+        - alert: KubernetesClusterMemoryUsageCrit
+          expr: (sum (container_memory_working_set_bytes{id="/"}) / sum (machine_memory_bytes) * 100) >= 90
+          for: 5m
+          labels:
+            severity: "critical"
+            route: slack-demo
+          annotations:
+            summary: "`{{ $labels.instance }}` memory usage is over {{ $value }}%"
+            description: "Kubernetes cluster memory usage is over {{ $value }}%"
+
+        - alert: KubernetesClusterCPUUsageWarn
+          expr: (sum (rate (container_cpu_usage_seconds_total{id="/"}[1m])) / sum (machine_cpu_cores) * 100) >= 80 and (sum (rate (container_cpu_usage_seconds_total{id="/"}[1m])) / sum (machine_cpu_cores) * 100) < 90
+          for: 5m
+          labels:
+            severity: "warning"
+            route: slack-demo
+          annotations:
+            summary: "`{{ $labels.instance }}` CPU usage is {{ $value }}%"
+            description: "Kubernetes cluster CPU usage is {{ $value }}%"
+
+        - alert: KubernetesClusterCPUUsageCrit
+          expr: (sum (rate (container_cpu_usage_seconds_total{id="/"}[1m])) / sum (machine_cpu_cores) * 100) > 90
+          for: 5m
+          labels:
+            severity: "critical"
+            route: slack-demo
+          annotations:
+            summary: "`{{ $labels.instance }}` CPU usage is {{ $value }}%"
+            description: "Kubernetes cluster CPU usage is {{ $value }}%"
+
+        - alert: DiskUsageWarn
+          expr: (100 * (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes)) >= 80 and (100 * (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes)) < 90
+          for: 5m
+          labels:
+            severity: "warning"
+            route: slack-demo
+          annotations:
+            summary: "`{{ $labels.persistentvolumeclaim }}` usage is {{ $value | printf \"%.2f\" }}%"
+            description: "PVC needs to be expanded or data needs to be deleted"
+
+        - alert: DiskUsageCrit
+          expr: (100 * (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes)) >= 90
+          for: 5m
+          labels:
+            severity: "critical"
+            route: slack-demo
+          annotations:
+            summary: "`{{ $labels.persistentvolumeclaim }}` usage is {{ $value | printf \"%.2f\" }}%"
+            description: "PVC needs to be expanded or data needs to be deleted"

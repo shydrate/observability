@@ -1,0 +1,78 @@
+---
+# Source: prometheus-blackbox-exporter/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-blackbox-prometheus-blackbox-exporter
+  namespace: monitoring
+  labels:
+    helm.sh/chart: prometheus-blackbox-exporter-7.8.0
+    app.kubernetes.io/name: prometheus-blackbox-exporter
+    app.kubernetes.io/instance: prometheus-blackbox
+    app.kubernetes.io/version: "0.23.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-blackbox-exporter
+      app.kubernetes.io/instance: prometheus-blackbox
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: prometheus-blackbox-exporter-7.8.0
+        app.kubernetes.io/name: prometheus-blackbox-exporter
+        app.kubernetes.io/instance: prometheus-blackbox
+        app.kubernetes.io/version: "0.23.0"
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/config: c27cdd29465df2b255046db36b8a4e62e2ea07f8b7d8c4ce5bd4c751cc409690
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: prometheus-blackbox-prometheus-blackbox-exporter
+      restartPolicy: Always
+      securityContext:
+        {}
+      containers:      
+        - name: blackbox-exporter
+          image: "prom/blackbox-exporter:v0.23.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+          env:
+          args:
+            - "--config.file=/config/blackbox.yaml"
+          resources:
+            {}
+          ports:
+            - containerPort: 9115
+              name: http
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /-/healthy
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /-/healthy
+              port: http
+          volumeMounts:
+            - mountPath: /config
+              name: config
+      hostNetwork: false
+      volumes:      
+        - name: config
+          configMap:
+            name: prometheus-blackbox-prometheus-blackbox-exporter
