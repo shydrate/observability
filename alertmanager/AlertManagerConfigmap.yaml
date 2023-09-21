@@ -43,7 +43,7 @@ data:
         require_tls: false
     - name: slack-demo
       slack_configs:
-      - api_url: https://hooks.slack.com/services/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
+      - api_url: https://hooks.slack.com/services/
         channel: '#loggingmonitoring'
 
 
