@@ -52,7 +52,7 @@ data:
             replacement: blackbox:9115  # The blackbox exporter's real hostname:port.
           - target_label: route
             replacement: slack-demo
-          - target_label: cluster
-            replacement: dmmo
+          # - target_label: cluster
+          #   replacement: dmmo
           - target_label: envinronment
             replacement: demo
