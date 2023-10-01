@@ -23,7 +23,6 @@ data:
         for: 2m
         labels:
           severity: critical
-          route: slack-demo
         annotations:
           summary: "Endpoint {{ $labels.instance }} appears to be down"
           description: "Network endpoint has not responded; check the endpoint"
@@ -33,7 +32,6 @@ data:
         for: 5m
         labels:
           severity: warning
-          route: slack-demo
         annotations:
           summary: "Memory usage of {{ $labels.instance }} is high"
           description: "Kubernetes cluster memory usage is over 80%"
@@ -43,7 +41,6 @@ data:
         for: 5m
         labels:
           severity: critical
-          route: slack-demo
         annotations:
           summary: "Memory usage of {{ $labels.instance }} is critical"
           description: "Kubernetes cluster memory usage is over 90%"
@@ -53,7 +50,6 @@ data:
         for: 5m
         labels:
           severity: warning
-          route: slack-demo
         annotations:
           summary: "CPU usage of {{ $labels.instance }} is high"
           description: "Kubernetes cluster CPU usage is over 80%"
@@ -63,7 +59,6 @@ data:
         for: 5m
         labels:
           severity: critical
-          route: slack-demo
         annotations:
           summary: "CPU usage of {{ $labels.instance }} is critical"
           description: "Kubernetes cluster CPU usage is over 90%"
@@ -73,7 +68,6 @@ data:
         for: 5m
         labels:
           severity: warning
-          route: slack-demo
         annotations:
           summary: "Disk usage of {{ $labels.persistentvolumeclaim }} is high"
           description: "Persistent Volume Claim (PVC) usage is over 80%. Consider expanding or deleting data."
@@ -83,7 +77,6 @@ data:
         for: 5m
         labels:
           severity: critical
-          route: slack-demo
         annotations:
           summary: "Disk usage of {{ $labels.persistentvolumeclaim }} is critical"
           description: "Persistent Volume Claim (PVC) usage is over 90%. Consider expanding or deleting data."
