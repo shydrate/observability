@@ -22,8 +22,7 @@ data:
         expr: probe_success == 0
         for: 2m
         labels:
-          severity: "critical"
-          route: slack-demo
+          severity: slack
         annotations:
           summary: "Endpoint {{ $labels.instance }} appears to be down"
           description: "Network endpoint has not responded; check the endpoint"
@@ -32,8 +31,7 @@ data:
         expr: (sum (container_memory_working_set_bytes{id="/"}) / sum (machine_memory_bytes) * 100) >= 80 and (sum (container_memory_working_set_bytes{id="/"}) / sum (machine_memory_bytes) * 100) < 90
         for: 5m
         labels:
-          severity: "warning"
-          route: slack-demo
+          severity: slack
         annotations:
           summary: "Memory usage of {{ $labels.instance }} is high"
           description: "Kubernetes cluster memory usage is over 80%"
@@ -42,8 +40,7 @@ data:
         expr: (sum (container_memory_working_set_bytes{id="/"}) / sum (machine_memory_bytes) * 100) >= 90
         for: 5m
         labels:
-          severity: "critical"
-          route: slack-demo
+          severity: slack
         annotations:
           summary: "Memory usage of {{ $labels.instance }} is critical"
           description: "Kubernetes cluster memory usage is over 90%"
@@ -52,8 +49,7 @@ data:
         expr: (sum (rate (container_cpu_usage_seconds_total{id="/"}[1m])) / sum (machine_cpu_cores) * 100) >= 80 and (sum (rate (container_cpu_usage_seconds_total{id="/"}[1m])) / sum (machine_cpu_cores) * 100) < 90
         for: 5m
         labels:
-          severity: "warning"
-          route: slack-demo
+          severity: slack
         annotations:
           summary: "CPU usage of {{ $labels.instance }} is high"
           description: "Kubernetes cluster CPU usage is over 80%"
@@ -62,8 +58,7 @@ data:
         expr: (sum (rate (container_cpu_usage_seconds_total{id="/"}[1m])) / sum (machine_cpu_cores) * 100) > 90
         for: 5m
         labels:
-          severity: "critical"
-          route: slack-demo
+          severity: slack
         annotations:
           summary: "CPU usage of {{ $labels.instance }} is critical"
           description: "Kubernetes cluster CPU usage is over 90%"
@@ -72,8 +67,7 @@ data:
         expr: (100 * (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes)) >= 80 and (100 * (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes)) < 90
         for: 5m
         labels:
-          severity: "warning"
-          route: slack-demo
+          severity: slack
         annotations:
           summary: "Disk usage of {{ $labels.persistentvolumeclaim }} is high"
           description: "Persistent Volume Claim (PVC) usage is over 80%. Consider expanding or deleting data."
@@ -82,8 +76,7 @@ data:
         expr: (100 * (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes)) >= 90
         for: 5m
         labels:
-          severity: "critical"
-          route: slack-demo
+          severity: slack
         annotations:
           summary: "Disk usage of {{ $labels.persistentvolumeclaim }} is critical"
           description: "Persistent Volume Claim (PVC) usage is over 90%. Consider expanding or deleting data."

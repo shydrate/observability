@@ -20,24 +20,24 @@ data:
           group_wait: 10s
           repeat_interval: 1m
           group_interval: 5m
-        - match:
-            severity: warning
-          receiver: slack-demo
-          group_wait: 30s
-          group_interval: 5m
-          repeat_interval: 10m
-        - match:
-            severity: critical
-          receiver: slack-demo
-          group_wait: 30s
-          group_interval: 5m
-          repeat_interval: 10m
-        - match:
-            severity: info
-          receiver: slack-demo
-          group_wait: 30s
-          group_interval: 5m
-          repeat_interval: 10m
+        # - match:
+        #     severity: warning
+        #   receiver: slack-demo
+        #   group_wait: 30s
+        #   group_interval: 5m
+        #   repeat_interval: 10m
+        # - match:
+        #     severity: critical
+        #   receiver: slack-demo
+        #   group_wait: 30s
+        #   group_interval: 5m
+        #   repeat_interval: 10m
+        # - match:
+        #     severity: info
+        #   receiver: slack-demo
+        #   group_wait: 30s
+        #   group_interval: 5m
+        #   repeat_interval: 10m
  
     receivers:
     - name: alert-emailer
