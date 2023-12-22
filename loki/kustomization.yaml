@@ -9,3 +9,4 @@ resources:
   - statefulset.yaml
   - serviceaccount.yaml
   - service.yaml
+  - service-nodeport.yaml

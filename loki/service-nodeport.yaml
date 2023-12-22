@@ -1,0 +1,25 @@
+---
+# Source: loki-stack/charts/loki/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+  namespace: monitoring
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: loki-stack
+    heritage: Helm
+  annotations:
+    {}
+spec:
+  type: NodePort
+  ports:
+    - port: 3100
+      protocol: TCP
+      name: http-metrics
+      targetPort: 3100
+      nodePort: 32001
+  selector:
+    app: loki
+    release: loki-stack
